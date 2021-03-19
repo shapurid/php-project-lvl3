@@ -24,7 +24,7 @@ lint:
 #	composer run-script phpstan
 
 lint-fix:
-	composer run-script phpcbf -- --standard=PSR12 src tests
+	composer run-script phpcbf
 
 test:
 	composer run-script test
