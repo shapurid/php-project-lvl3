@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DomainController;
+use App\Http\Controllers\UrlsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('root');
 
-Route::name('domains.')->group(function () {
-    Route::get('/domains', [DomainController::class, 'index'])->name('index');
+Route::name('urls.')->group(function () {
+    Route::get('/urls', [UrlsController::class, 'index'])->name('index');
 });
