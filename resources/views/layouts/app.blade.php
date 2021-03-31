@@ -41,7 +41,7 @@
             @yield('content')
         </main>
         <footer class="text-muted">
-            <div class="container">
+            <div class="container border-top">
                 <p class="float-right">
                     <a href="#">Back to top</a>
                 </p>

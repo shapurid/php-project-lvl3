@@ -18,6 +18,4 @@ Route::get('/', function () {
     return view('welcome');
 })->name('root');
 
-Route::name('urls.')->group(function () {
-    Route::get('/urls', [UrlsController::class, 'index'])->name('index');
-});
+Route::resource('urls', UrlsController::class)->only('index');
