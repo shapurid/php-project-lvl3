@@ -17,11 +17,9 @@
                             ['class' => "form-control form-control-lg{$isInvalid}", 'placeholder' => 'https://www.example.com']) }}
                         {{ Form::submit('Проверить', ['class' => 'btn btn-lg btn-primary ml-3 text-uppercase'])}}
                     {{ Form::close() }}
-                    @if ($errors->has('url.name'))
-                            @foreach ($errors->all() as $error)
-                                <div class="text-danger text-left">{{ $error }}</div>
-                            @endforeach
-                        @endif
+                    @if ($errors->any())
+                        <div class="text-danger text-left">{{ $errors->first() }}</div>
+                    @endif
                 </div>
                 <div class="col"></div>
             </div>

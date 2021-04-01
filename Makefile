@@ -19,6 +19,11 @@ setup:
 	php artisan db:seed
 	npm install
 
+refresh-db:
+	php artisan db:wipe
+	php artisan migrate
+	php artisan db:seed
+
 lint:
 	composer run-script phpcs
 #	composer run-script phpstan

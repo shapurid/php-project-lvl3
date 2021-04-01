@@ -18,4 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('root');
 
-Route::resource('urls', UrlsController::class)->only(['index', 'store']);
+Route::resource('urls', UrlsController::class)
+    ->parameters(['urls' => 'id'])
+    ->only(['index', 'store', 'show']);

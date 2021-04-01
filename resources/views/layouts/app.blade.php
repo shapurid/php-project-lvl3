@@ -33,10 +33,10 @@
                     </div>
                 </div>
             </nav>
-            <div class="container">
-                @include('flash::message')
-            </div>
         </header>
+        <div class="container">
+            @include('flash::message')
+        </div>
         <main role="main">
             @yield('content')
         </main>
