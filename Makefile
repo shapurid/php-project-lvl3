@@ -37,3 +37,6 @@ validate:
 
 autoload-update:
 	composer dump-autoload
+
+tinker:
+	php artisan tinker

@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $faker = \Faker\Factory::create();
         DB::table('urls')->insert([
             [
-                'name' => 'https://www.google.ru/',
+                'name' => 'https://www.google.ru',
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString()
             ],
