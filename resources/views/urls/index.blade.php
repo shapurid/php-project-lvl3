@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="container">
-        <h1 class="mt-3 mb-3">Сайты</h1>
+        <h1 class="my-3">Сайты</h1>
         @if ($urls->isEmpty())
             <p>Список проверок пуст.</p>
         @else
@@ -19,7 +19,7 @@
                         <tr>
                             <td>{{ $url->id }}</td>
                             <td>
-                                <a href="#">{{ $url->name }}</a>
+                                <a href={{ route('urls.show', ['id' => $url->id]) }}>{{ $url->name }}</a>
                             </td>
                             <td>{{ $url->created_at }}</td>
                             <td>{{ $url->updated_at }}</td>
