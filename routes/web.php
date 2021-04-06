@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UrlsController;
 
 /*
@@ -14,9 +15,7 @@ use App\Http\Controllers\UrlsController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('root');
+Route::get('/', [HomeController::class, 'index'])->name('root');
 
 Route::resource('urls', UrlsController::class)
     ->parameters(['urls' => 'id'])
