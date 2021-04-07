@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UrlsController;
+use App\Http\Controllers\UrlChecksController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,5 +19,7 @@ use App\Http\Controllers\UrlsController;
 Route::get('/', [HomeController::class, 'index'])->name('root');
 
 Route::resource('urls', UrlsController::class)
-    ->parameters(['urls' => 'id'])
+    ->parameters(['urls' => 'urlId'])
     ->only(['index', 'store', 'show']);
+
+Route::post('/urls/{urlId}/checks', [UrlChecksController::class, 'store'])->name('urls.checks.store');
