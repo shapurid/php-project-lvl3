@@ -17,10 +17,10 @@ class UrlChecksController extends Controller
             abort(404);
         }
         try {
-            $response = Http::get($foundUrl);
+            $response = Http::get($foundUrl->name);
             [$mediaType] = explode('; ', $response->header('content-type'));
-            if (strcmp($mediaType, 'text/htm') !== 0) {
-                flash('Запрашиваемый ресурс не отдаёт html, нечего анализировать', 'error');
+            if (strcmp($mediaType, 'text/html') !== 0) {
+                flash('Запрашиваемый ресурс не отдаёт html, нечего анализировать')->error();
                 return redirect()->route('urls.show', ['urlId' => $urlId]);
             }
             $statusCode = $response->status();
@@ -30,15 +30,9 @@ class UrlChecksController extends Controller
             $foundMetaKeywords = $document->first('meta[name=keywords]');
             $foundMetaDescription = $document->first('meta[name=description]');
 
-            $h1Content = is_null($foundH1Tag)
-                ? null
-                : $foundH1Tag->text();
-            $metaKeywordsContent = is_null($foundMetaKeywords)
-                ? null
-                : $foundMetaKeywords->getAttribute('content');
-            $metaDescriptionContent = is_null($foundMetaDescription)
-                ? null
-                : $foundMetaDescription->getAttribute('content');
+            $h1Content = optional($foundH1Tag)->text();
+            $metaKeywordsContent = optional($foundMetaKeywords)->getAttribute('content');
+            $metaDescriptionContent = optional($foundMetaDescription)->getAttribute('content');
             DB::table('url_checks')->insert([
                 'url_id' => $urlId,
                 'status_code' => $statusCode,
@@ -48,13 +42,14 @@ class UrlChecksController extends Controller
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString()
             ]);
-        } catch (ConnectionException $error) {
-            flash('Запрашиваемый ресурс не найден', 'error');
+        } catch (ConnectionException) {
+            flash('Запрашиваемый ресурс не найден')->error();
             return redirect()->route('urls.show', ['urlId' => $urlId]);
-        } catch (\Exception $error) {
-            abort(500);
+        } catch (\Exception) {
+            flash('Произошла неизвестная ошибка, попробуйте позже')->error();
+            return redirect()->route('urls.show', ['urlId' => $urlId]);
         }
-        flash('Проверка успешно пройдена', 'success');
+        flash('Проверка успешно пройдена')->success();
         return redirect()->route('urls.show', ['urlId' => $urlId]);
     }
 }
