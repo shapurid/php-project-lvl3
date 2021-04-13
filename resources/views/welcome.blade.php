@@ -13,8 +13,10 @@
                     <h1>Анализатор страниц</h1>
                     <p>Бесплатно проверяйте сайты на SEO пригодность</p>
                     {{ Form::open(['route' => 'urls.store', 'class' => 'd-flex justify-content-center']) }}
-                        {{ Form::text('url[name]', null,
-                            ['class' => "form-control form-control-lg{$isInvalid}", 'placeholder' => 'https://www.example.com']) }}
+                        {{ Form::text('url[name]', null, [
+                            'class' => "form-control form-control-lg{$isInvalid}",
+                            'placeholder' => 'https://www.example.com'
+                        ]) }}
                         {{ Form::submit('Проверить', ['class' => 'btn btn-lg btn-primary ml-3 text-uppercase'])}}
                     {{ Form::close() }}
                     @if ($errors->any())

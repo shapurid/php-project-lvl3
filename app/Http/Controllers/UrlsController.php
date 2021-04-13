@@ -15,13 +15,14 @@ class UrlsController extends Controller
         return view('urls.index', [ 'urls' => $urls ]);
     }
 
-    public function show($id)
+    public function show($urlId)
     {
-        $foundUrl = DB::table('urls')->find($id);
+        $foundUrl = DB::table('urls')->find($urlId);
         if (is_null($foundUrl)) {
             abort(404);
         }
-        return view('urls.show', ['url' => $foundUrl]);
+        $urlChecks = DB::table('url_checks')->where('url_id', '=', $urlId)->get();
+        return view('urls.show', ['url' => $foundUrl, 'urlChecks' => $urlChecks]);
     }
 
     public function store(Request $request)
@@ -47,15 +48,15 @@ class UrlsController extends Controller
         $foundUrl = DB::table('urls')->where('name', $normalizedUrl)->first();
 
         if (!is_null($foundUrl)) {
-            flash('Данный сайт уже проходил проверку', 'warning');
-            return redirect()->route('urls.show', ['id' => $foundUrl->id]);
+            flash('Данный сайт уже проходил проверку')->warning();
+            return redirect()->route('urls.show', ['urlId' => $foundUrl->id]);
         }
         $insertedUrlId = DB::table('urls')->insertGetId([
             'name' => $normalizedUrl,
             'created_at' => Carbon::now()->toDateTimeString(),
             'updated_at' => Carbon::now()->toDateTimeString()
         ]);
-        flash('Сайт успешно добавлен', 'success');
-        return redirect()->route('urls.show', ['id' => $insertedUrlId]);
+        flash('Сайт успешно добавлен')->success();
+        return redirect()->route('urls.show', ['urlId' => $insertedUrlId]);
     }
 }
