@@ -33,17 +33,17 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => Carbon::now()->toDateTimeString()
             ]
         ]);
-        $insertedUrlIds = DB::table('urls')->pluck('id');
-        foreach ($insertedUrlIds as $id) {
-            DB::table('url_checks')->insert([
-                'url_id' => $id,
-                'status_code' => 418,
-                'h1' => $faker->title(),
-                'keywords' => "{$faker->word}, {$faker->word}, {$faker->word}",
-                'description' => $faker->text(),
-                'created_at' => Carbon::now()->toDateTimeString(),
-                'updated_at' => Carbon::now()->toDateTimeString()
-            ]);
-        }
+        // $insertedUrlIds = DB::table('urls')->pluck('id');
+        // foreach ($insertedUrlIds as $id) {
+        //     DB::table('url_checks')->insert([
+        //         'url_id' => $id,
+        //         'status_code' => 418,
+        //         'h1' => $faker->title(),
+        //         'keywords' => "{$faker->word}, {$faker->word}, {$faker->word}",
+        //         'description' => $faker->text(),
+        //         'created_at' => Carbon::now()->toDateTimeString(),
+        //         'updated_at' => Carbon::now()->toDateTimeString()
+        //     ]);
+        // }
     }
 }

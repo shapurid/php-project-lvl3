@@ -26,7 +26,6 @@ refresh-db:
 
 lint:
 	composer run-script phpcs
-#	composer run-script phpstan
 
 lint-fix:
 	composer run-script phpcbf
