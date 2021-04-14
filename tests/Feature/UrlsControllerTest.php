@@ -38,11 +38,11 @@ class UrlsControllerTest extends TestCase
 
     public function testStore(): void
     {
-        $url = "https://www.{$this->faker->domainName}/";
+        $url = "https://www.{$this->faker->domainName}";
         $response = $this->post(route('urls.store', ['url[name]' => $url]));
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
-        $this->assertDatabaseHas($this->tableName, ['name' => $url]);
+        $this->assertDatabaseHas($this->tableName, ['name' => "{$url}/"]);
     }
 }
