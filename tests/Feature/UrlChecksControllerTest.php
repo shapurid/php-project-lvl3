@@ -11,9 +11,6 @@ use Tests\TestCase;
 class UrlChecksControllerTest extends TestCase
 {
     use RefreshDatabase;
-    use WithFaker;
-
-    protected $faker;
 
     protected function setUp(): void
     {
@@ -26,6 +23,9 @@ class UrlChecksControllerTest extends TestCase
     {
         $data = DB::table('urls')->inRandomOrder()->first();
         $content = file_get_contents(__DIR__ . '/fixtures/test.html');
+
+        $this->assertNotNull($data);
+
         Http::fake([
             $data->name => Http::response($content, 200, ['content-type' => 'text/html'])
         ]);

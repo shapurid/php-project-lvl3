@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\View\View;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -9,11 +13,19 @@ use Carbon\Carbon;
 
 class UrlsController extends Controller
 {
+    /**
+     * @return View|Factory
+     */
     public function index()
     {
         $urls = DB::table('urls')->get();
         return view('urls.index', [ 'urls' => $urls ]);
     }
+
+    /**
+     * @param int|string $urlId
+     * @return View|Factory|void
+     */
 
     public function show($urlId)
     {
@@ -25,6 +37,10 @@ class UrlsController extends Controller
         return view('urls.show', ['url' => $foundUrl, 'urlChecks' => $urlChecks]);
     }
 
+    /**
+     * @return Redirector|RedirectResponse
+     */
+
     public function store(Request $request)
     {
         ['url' => ['name' => $urlName]] = $this->validate(
@@ -33,8 +49,11 @@ class UrlsController extends Controller
             ['url.name.required' => 'Введите адрес страницы.']
         );
 
+        $parsedUrl = parse_url($urlName);
+        $normalizedParsedUrl = is_array($parsedUrl) ? $parsedUrl : [];
+
         $validatedUrl = Validator::make(
-            parse_url($urlName),
+            $normalizedParsedUrl,
             [
                 'scheme' => 'required',
                 'host' => 'bail|required',
@@ -47,9 +66,9 @@ class UrlsController extends Controller
 
         $foundUrl = DB::table('urls')->where('name', $normalizedUrl)->first();
 
-        if (!is_null($foundUrl)) {
+        if (isset($foundUrl->id)) {
             flash('Данный сайт уже проходил проверку')->warning();
-            return redirect()->route('urls.show', ['urlId' => $foundUrl->id]);
+            return redirect(route('urls.show', ['urlId' => $foundUrl->id]));
         }
         $insertedUrlId = DB::table('urls')->insertGetId([
             'name' => $normalizedUrl,
@@ -57,6 +76,6 @@ class UrlsController extends Controller
             'updated_at' => Carbon::now()->toDateTimeString()
         ]);
         flash('Сайт успешно добавлен')->success();
-        return redirect()->route('urls.show', ['urlId' => $insertedUrlId]);
+        return redirect(route('urls.show', ['urlId' => $insertedUrlId]));
     }
 }

@@ -14,8 +14,6 @@ class UrlsControllerTest extends TestCase
 
     private $tableName = 'urls';
 
-    protected $faker;
-
     protected function setUp(): void
     {
         parent::setUp();
