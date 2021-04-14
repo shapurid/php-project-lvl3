@@ -43,6 +43,6 @@ class UrlsControllerTest extends TestCase
 
         $response->assertSessionHasNoErrors();
         $response->assertRedirect();
-        $this->assertDatabaseHas($this->tableName, ['name' => "{$url}/"]);
+        $this->assertDatabaseHas($this->tableName, ['name' => "{$url}"]);
     }
 }

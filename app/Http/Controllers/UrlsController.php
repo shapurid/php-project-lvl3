@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
+use App\Utils\UrlFormer;
 
 class UrlsController extends Controller
 {
@@ -62,16 +63,16 @@ class UrlsController extends Controller
             ['required' => 'Введите корректный адрес страницы.']
         )->validate();
 
-        $normalizedUrl = "{$validatedUrl['scheme']}://{$validatedUrl['host']}" . ($validatedUrl['path'] ?? '/');
+        $formedUrl = (new UrlFormer($validatedUrl))->formUrl();
 
-        $foundUrl = DB::table('urls')->where('name', $normalizedUrl)->first();
+        $foundUrl = DB::table('urls')->where('name', $formedUrl)->first();
 
         if (isset($foundUrl->id)) {
             flash('Данный сайт уже проходил проверку')->warning();
             return redirect(route('urls.show', ['urlId' => $foundUrl->id]));
         }
         $insertedUrlId = DB::table('urls')->insertGetId([
-            'name' => $normalizedUrl,
+            'name' => $formedUrl,
             'created_at' => Carbon::now()->toDateTimeString(),
             'updated_at' => Carbon::now()->toDateTimeString()
         ]);
