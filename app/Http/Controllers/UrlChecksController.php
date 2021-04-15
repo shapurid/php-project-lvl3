@@ -26,11 +26,11 @@ class UrlChecksController extends Controller
         }
         try {
             $response = Http::get($foundUrl->name);
-            [$mediaType] = explode('; ', $response->header('content-type'));
-            if (strcmp($mediaType, 'text/html') !== 0) {
-                flash('Запрашиваемый ресурс не отдаёт html, нечего анализировать')->error();
-                return redirect(route('urls.show', ['urlId' => $urlId]));
-            }
+            // [$mediaType] = explode('; ', $response->header('content-type'));
+            // if (strcmp($mediaType, 'text/html') !== 0) {
+            //     flash('Запрашиваемый ресурс не отдаёт html, нечего анализировать')->error();
+            //     return redirect(route('urls.show', ['urlId' => $urlId]));
+            // }
             $statusCode = $response->status();
             $body = $response->body();
             $document = new Document($body);
