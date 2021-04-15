@@ -12,7 +12,7 @@ class UrlsControllerTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
-    private $tableName = 'urls';
+    private string $tableName = 'urls';
 
     protected function setUp(): void
     {
@@ -30,6 +30,9 @@ class UrlsControllerTest extends TestCase
     public function testShow(): void
     {
         $data = DB::table($this->tableName)->inRandomOrder()->first();
+        if (!isset($data->id)) {
+            throw new \Exception("data is not object");
+        }
         $response = $this->get(route('urls.show', ['urlId' => $data->id]));
         $response->assertStatus(200);
 

@@ -14,7 +14,7 @@ class UrlFormer
     }
 
     /**
-     * @param array<string, string> $parsedUrl
+     * @param array<string, int|string> $parsedUrl
      */
 
     public function __construct(array $parsedUrl)

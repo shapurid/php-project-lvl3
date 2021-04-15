@@ -23,7 +23,9 @@ class UrlChecksControllerTest extends TestCase
         $data = DB::table('urls')->inRandomOrder()->first();
         $content = file_get_contents(__DIR__ . '/fixtures/test.html');
 
-        $this->assertNotNull($data);
+        if (!isset($data->name) || !isset($data->id)) {
+            throw new \Exception("data is not object");
+        }
 
         Http::fake([
             $data->name => Http::response($content, 200, ['content-type' => 'text/html'])
