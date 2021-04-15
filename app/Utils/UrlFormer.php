@@ -4,11 +4,25 @@ namespace App\Utils;
 
 class UrlFormer
 {
-    private string $scheme;
-    private string $host;
-    private string $path;
-
-    private function normalizePath(string $path): string
+    /**
+     * @var int|string
+     */
+    private $scheme;
+    /**
+     * @var int|string
+     */
+    private $host;
+    /**
+     * @var int|string
+     */
+    private $path;
+    /**
+     * Undocumented function
+     *
+     * @param int|string $path
+     * @return int|string
+     */
+    private function normalizePath($path)
     {
         return $path === '/' ? '' : $path;
     }

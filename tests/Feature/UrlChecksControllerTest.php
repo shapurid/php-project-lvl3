@@ -26,6 +26,9 @@ class UrlChecksControllerTest extends TestCase
         if (!isset($data->name) || !isset($data->id)) {
             throw new \Exception("data is not object");
         }
+        if (!is_string($content)) {
+            throw new \Exception("can't get content");
+        }
 
         Http::fake([
             $data->name => Http::response($content, 200, ['content-type' => 'text/html'])
