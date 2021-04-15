@@ -18,6 +18,6 @@ class UrlFormerTest extends TestCase
         }
         $formedUrl = (new UrlFormer($parsedUrl))->formUrl();
 
-        $this->assertTrue($url === $formedUrl);
+        self::assertTrue($url === $formedUrl);
     }
 }
