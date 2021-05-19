@@ -64,7 +64,7 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "phpcs": "phpcs",
+        "phpcs": "phpcs --extensions=php",
         "phpcbf": "phpcbf",
         "test": "phpunit tests",
         "phpstan": "phpstan analyse -l 8 app"
