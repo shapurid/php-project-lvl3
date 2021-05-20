@@ -7,7 +7,6 @@
 This is web application to analyze URL and get minimum SEO information from meta tags: _description_ and _keywords_, if page has
   *h1* tag, analyzer will get *h1* inner HTML. 
 
-This is my third project on online education platform [hexlet.oi](https://hexlet.io) 
 
 #### Setup
 ```
