@@ -22,7 +22,7 @@ class UrlFactory extends Factory
     public function definition()
     {
         return [
-            'name' => "https://www.{$this->faker->domainName()}"
+            'name' => "https://www.{$this->faker->domainName}"
         ];
     }
 }
