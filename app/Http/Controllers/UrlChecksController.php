@@ -4,44 +4,33 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\ConnectionException;
-use DiDom\Document;
-use App\Models\Url;
-use App\Models\UrlCheck;
+use App\Repositories\UrlCheckRepository;
+use App\Repositories\UrlRepository;
+
+use function App\Helpers\extractDataFromResponse;
 
 class UrlChecksController extends Controller
 {
     /**
-     * Undocumented function
-     *
      * @param int|string $urlId
      * @return RedirectResponse|Redirector
      */
-    public function store($urlId)
+    public function store($urlId, UrlRepository $urlRepository, UrlCheckRepository $urlCheckRepository)
     {
-        $foundUrl = Url::findOrFail($urlId);
+        $foundUrl = $urlRepository->findByIdOrFail($urlId);
 
         try {
-            $response = Http::get($foundUrl->name);
+            $response = $urlRepository->getResponse($foundUrl->name);
 
-            $statusCode = $response->status();
-            $body = $response->body();
-            $document = new Document($body);
-            $foundH1Tag = $document->first('h1');
-            $foundMetaKeywords = $document->first('meta[name=keywords]');
-            $foundMetaDescription = $document->first('meta[name=description]');
+            $extractedData = extractDataFromResponse($response);
 
-            $h1Content = optional($foundH1Tag)->text();
-            $metaKeywordsContent = optional($foundMetaKeywords)->getAttribute('content');
-            $metaDescriptionContent = optional($foundMetaDescription)->getAttribute('content');
-            UrlCheck::create([
-                'url_id' => $urlId,
-                'status_code' => $statusCode,
-                'h1' => $h1Content,
-                'keywords' => $metaKeywordsContent,
-                'description' => $metaDescriptionContent
-            ]);
+            $urlCheckRepository->insert(
+                array_merge(
+                    ['url_id' => $urlId],
+                    $extractedData
+                )
+            );
         } catch (ConnectionException) {
             flash('Запрашиваемый ресурс не найден')->error();
             return redirect(route('urls.show', ['urlId' => $urlId]));

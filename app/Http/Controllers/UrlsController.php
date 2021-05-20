@@ -7,7 +7,8 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use App\Http\Requests\StoreUrlRequest;
-use App\Models\Url;
+use App\Repositories\UrlCheckRepository;
+use App\Repositories\UrlRepository;
 
 use function App\Helpers\normalizeUrl;
 
@@ -16,9 +17,9 @@ class UrlsController extends Controller
     /**
      * @return View|Factory
      */
-    public function index()
+    public function index(UrlRepository $urlRepository)
     {
-        $urls = Url::all();
+        $urls = $urlRepository->findAll();
         return view('urls.index', [ 'urls' => $urls ]);
     }
 
@@ -27,11 +28,11 @@ class UrlsController extends Controller
      * @return View|Factory|void
      */
 
-    public function show($urlId)
+    public function show($urlId, UrlRepository $urlRepository, UrlCheckRepository $urlCheckRepository)
     {
-        $foundUrl = Url::findOrFail($urlId);
+        $foundUrl = $urlRepository->findByIdOrFail($urlId);
 
-        $urlChecks = Url::find($urlId)->checks;
+        $urlChecks = $urlCheckRepository->findAllByUrlId($urlId);
         return view('urls.show', ['url' => $foundUrl, 'urlChecks' => $urlChecks]);
     }
 
@@ -40,21 +41,19 @@ class UrlsController extends Controller
      * @return Redirector|RedirectResponse
      */
 
-    public function store(StoreUrlRequest $request)
+    public function store(StoreUrlRequest $request, UrlRepository $urlRepository)
     {
         ['url' => ['name' => $urlName]] = $request->validated();
 
         $normalizedUrl = normalizeUrl($urlName);
 
-        $foundUrl = Url::firstWhere('name', $normalizedUrl);
+        $foundUrl = $urlRepository->findOneWhere('name', $normalizedUrl);
 
         if (isset($foundUrl->id)) {
             flash('Данный сайт уже проходил проверку')->warning();
             return redirect(route('urls.show', ['urlId' => $foundUrl->id]));
         }
-        $insertedUrlId = Url::create([
-            'name' => $normalizedUrl
-        ]);
+        $insertedUrlId = $urlRepository->insert(['name' => $normalizedUrl]);
         flash('Сайт успешно добавлен')->success();
         return redirect(route('urls.show', ['urlId' => $insertedUrlId]));
     }
