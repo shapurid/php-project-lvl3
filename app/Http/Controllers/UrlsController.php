@@ -8,9 +8,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StoreUrlRequest;
 use Carbon\Carbon;
-use App\Utils\UrlFormer;
+
+use function App\Helpers\normalizeUrl;
 
 class UrlsController extends Controller
 {
@@ -39,40 +40,24 @@ class UrlsController extends Controller
     }
 
     /**
+     * @param \App\Http\Requests\StoreUrlRequest $request
      * @return Redirector|RedirectResponse
      */
 
-    public function store(Request $request)
+    public function store(StoreUrlRequest $request)
     {
-        ['url' => ['name' => $urlName]] = $this->validate(
-            $request,
-            ['url.name' => 'required'],
-            ['url.name.required' => 'Введите адрес страницы.']
-        );
+        ['url' => ['name' => $urlName]] = $request->validated();
 
-        $parsedUrl = parse_url($urlName);
-        $normalizedParsedUrl = is_array($parsedUrl) ? $parsedUrl : [];
+        $normalizedUrl = normalizeUrl($urlName);
 
-        $validatedUrl = Validator::make(
-            $normalizedParsedUrl,
-            [
-                'scheme' => 'required',
-                'host' => 'bail|required',
-                'path' => 'nullable|string'
-            ],
-            ['required' => 'Введите корректный адрес страницы.']
-        )->validate();
-
-        $formedUrl = (new UrlFormer($validatedUrl))->formUrl();
-
-        $foundUrl = DB::table('urls')->where('name', $formedUrl)->first();
+        $foundUrl = DB::table('urls')->where('name', $normalizedUrl)->first();
 
         if (isset($foundUrl->id)) {
             flash('Данный сайт уже проходил проверку')->warning();
             return redirect(route('urls.show', ['urlId' => $foundUrl->id]));
         }
         $insertedUrlId = DB::table('urls')->insertGetId([
-            'name' => $formedUrl,
+            'name' => $normalizedUrl,
             'created_at' => Carbon::now()->toDateTimeString(),
             'updated_at' => Carbon::now()->toDateTimeString()
         ]);
