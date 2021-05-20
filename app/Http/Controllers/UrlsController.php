@@ -6,10 +6,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreUrlRequest;
-use Carbon\Carbon;
+use App\Models\Url;
 
 use function App\Helpers\normalizeUrl;
 
@@ -20,7 +18,7 @@ class UrlsController extends Controller
      */
     public function index()
     {
-        $urls = DB::table('urls')->get();
+        $urls = Url::all();
         return view('urls.index', [ 'urls' => $urls ]);
     }
 
@@ -31,11 +29,9 @@ class UrlsController extends Controller
 
     public function show($urlId)
     {
-        $foundUrl = DB::table('urls')->find($urlId);
-        if (is_null($foundUrl)) {
-            abort(404);
-        }
-        $urlChecks = DB::table('url_checks')->where('url_id', '=', $urlId)->get();
+        $foundUrl = Url::findOrFail($urlId);
+
+        $urlChecks = Url::find($urlId)->checks;
         return view('urls.show', ['url' => $foundUrl, 'urlChecks' => $urlChecks]);
     }
 
@@ -50,16 +46,14 @@ class UrlsController extends Controller
 
         $normalizedUrl = normalizeUrl($urlName);
 
-        $foundUrl = DB::table('urls')->where('name', $normalizedUrl)->first();
+        $foundUrl = Url::firstWhere('name', $normalizedUrl);
 
         if (isset($foundUrl->id)) {
             flash('Данный сайт уже проходил проверку')->warning();
             return redirect(route('urls.show', ['urlId' => $foundUrl->id]));
         }
-        $insertedUrlId = DB::table('urls')->insertGetId([
-            'name' => $normalizedUrl,
-            'created_at' => Carbon::now()->toDateTimeString(),
-            'updated_at' => Carbon::now()->toDateTimeString()
+        $insertedUrlId = Url::create([
+            'name' => $normalizedUrl
         ]);
         flash('Сайт успешно добавлен')->success();
         return redirect(route('urls.show', ['urlId' => $insertedUrlId]));
