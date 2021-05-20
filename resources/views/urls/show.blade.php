@@ -15,7 +15,7 @@
         <div class="table-responsive">
             <table class="table table-bordered table-hover text-nowrap">
                 <tbody>
-                     @foreach ($url as $key => $value)
+                     @foreach ($url->getAttributes() as $key => $value)
                         @isset($urlFieldNames[$key])
                             <tr>
                                 <td>{{ $urlFieldNames[$key] }}</td>
