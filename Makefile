@@ -19,6 +19,13 @@ setup:
 	php artisan db:seed
 	npm install
 
+setup-prod:
+	composer install --optimize-autoloader --no-dev
+	cp -n .env.example .env|| true
+	php artisan key:gen --ansi
+	touch database/database.sqlite
+	php artisan migrate
+
 refresh-db:
 	php artisan db:wipe
 	php artisan migrate
